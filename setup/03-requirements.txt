@@ -1,0 +1,7 @@
+FuncDesigner==0.5115
+cvxopt==1.1.6
+inspyred==1.0
+numpy==1.7.1
+openopt==0.5115
+scipy==0.12.0
+#sympy==0.7.1
