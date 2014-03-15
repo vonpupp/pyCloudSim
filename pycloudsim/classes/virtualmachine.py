@@ -16,22 +16,26 @@
 Virtual Machine Model
 """
 __version__ = "0.1"
-__author__  = "Albert De La Fuente"
+__author__ = "Albert De La Fuente"
 
-import uuid
 
 class VirtualMachine(dict):
     __count__ = 0
-    def __init__(self, id, cpu, mem, disk, net):
+
+    def __init__(self, id, cpu_gen, mem_gen, disk_gen, net_gen):
         #id = uuid.uuid1()
+        self.cpu_gen = cpu_gen
+        self.mem_gen = mem_gen
+        self.disk_gen = disk_gen
+        self.net_gen = net_gen
+
         self.value = {}
         self.id = '%d' % id #VirtualMachine.__count__
-        #self.id = str(id)[4:8] #'%d' % VirtualMachine.__count__
         self.value['weight'] = 1
-        self.value['cpu'] = cpu
-        self.value['mem'] = mem
-        self.value['disk'] = disk
-        self.value['net'] = net
+        self.value['cpu'] = cpu_gen.next()
+        self.value['mem'] = mem_gen.next()
+        self.value['disk'] = disk_gen.next()
+        self.value['net'] = net_gen.next()
         self.value['n'] = 1
         self.value['placed'] = 0
         VirtualMachine.__count__ += 1
@@ -39,8 +43,10 @@ class VirtualMachine(dict):
     def __str__(self):
         result = 'VM{}({}, {}, {}, {})'.format(
             self.id,
-            self.value['cpu'], self.value['mem'],
-            self.value['disk'], self.value['net'])
+            self.value['cpu'],
+            self.value['mem'],
+            self.value['disk'],
+            self.value['net'])
         return result
 
     def __getitem__(self, attribute):

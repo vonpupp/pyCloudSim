@@ -18,12 +18,30 @@ Virtual Machines Manager
 __version__ = "0.1"
 __author__  = "Albert De La Fuente"
 
-from distsim.model.tracegen import TraceGenerator
+from pycloudsim.classes.tracegen import *
 from itertools import islice
-from distsim.model.virtualmachine import VirtualMachine
+from pycloudsim.classes.virtualmachine import VirtualMachine
 
 class VMManager:
-    def __init__(self, trace_file, total_vm):
+    def __init__(self):
+        pass
+
+    def add_heavy(self):
+        pass
+
+    def add_medium(self):
+        pass
+
+    def add_light(self):
+        pass
+
+    def add_from_function(self):
+        pass
+
+    def consolidate_vms():
+        pass
+
+    def add_from_trace(self, quantity, selector):
         tg = TraceGenerator(trace_file)
         trace = tg.gen_trace()
         self.items = []
@@ -63,3 +81,14 @@ class VMManager:
             result += str(item) + ', '
         result += ']'
         return result
+
+    def place_vm(self, vm):
+        self.vms.append(vm)
+        vm.value['placed'] = 1
+        self.cpu = self.mem = 0
+        self.disk = self.net = 0
+        for vm in self.vms:
+            self.cpu += vm.value['cpu']
+            self.mem += vm.value['mem']
+            self.disk += vm.value['disk']
+            self.net += vm.value['net']
