@@ -79,6 +79,7 @@ if __name__ == "__main__":
     parser.add_argument('-sksp', '--simksp', help='Simulate Iterated-KSP', required=False)
     parser.add_argument('-sec', '--simec', help='Simulate Iterated-EC', required=False)
     parser.add_argument('-seccpu', '--simeccpu', help='Simulate Iterated-EC-CPU', required=False)
+    parser.add_argument('-skspmem', '--simkspmem', help='Simulate Iterated-KSP-CPU', required=False)
     args = parser.parse_args()
 
     pmcount = int(get_default_arg(72, args.pmcount))
@@ -91,6 +92,7 @@ if __name__ == "__main__":
     simulate_ksp = bool(get_default_arg(0, args.simksp))
     simulate_ec = bool(get_default_arg(0, args.simec))
     simulate_ec_cpu = bool(get_default_arg(0, args.simeccpu))
+    simulate_ksp_mem = bool(get_default_arg(0, args.simkspmem))
 
     s = Simulator()
 
@@ -108,6 +110,11 @@ if __name__ == "__main__":
     if simulate_ksp:
         from distsim.strategies.iteratedksp import OpenOptStrategyPlacement
         strategy = OpenOptStrategyPlacement()
+        s.simulate_strategy(strategy, trace_file, pms_scenarios, vms_scenarios)
+
+    if simulate_ksp_mem:
+        from distsim.strategies.iteratedkspmem import OpenOptStrategyPlacementMem
+        strategy = OpenOptStrategyPlacementMem()
         s.simulate_strategy(strategy, trace_file, pms_scenarios, vms_scenarios)
 
     if simulate_ec:
