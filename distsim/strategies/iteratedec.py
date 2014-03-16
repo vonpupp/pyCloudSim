@@ -73,7 +73,7 @@ class EvolutionaryComputationStrategyPlacement:
         for item in items_list:
             result += [self.vmm.items[item]]#get_item_values(item)]
         return result
-      
+
     def set_vmm(self, vmm):
         self.vmm = vmm
         self.items = self.vmm.items
@@ -81,13 +81,13 @@ class EvolutionaryComputationStrategyPlacement:
     def solve_host(self):
         prng = random.Random()
         prng.seed(time.time())
-        
+
         itemstuples = self.gen_vms()
-        
+
         psize = 50
         tsize = 25
         evals = 2500
-        
+
         ea = inspyred.ec.EvolutionaryComputation(prng)
         ea.selector = inspyred.ec.selectors.tournament_selection
         ea.variator = [inspyred.ec.variators.n_point_crossover, inspyred.ec.variators.bit_flip_mutation]
@@ -105,7 +105,7 @@ class EvolutionaryComputationStrategyPlacement:
                               max_evaluations=evals,
                               items=itemstuples
                               )
-    
+
         best = max(final_pop)
         result = [i for i, c in enumerate(best.candidate) if c == 1]
         return result

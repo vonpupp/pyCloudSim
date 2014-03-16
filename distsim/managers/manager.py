@@ -39,12 +39,12 @@ class Manager:
     def set_pm_count(self, total_pm):
         self.total_pm = total_pm
         self.pmm = PMManager(total_pm)
-        
+
     def set_strategy(self, strategy):
         self.strategy = strategy
         self.strategy.set_vmm(self.vmm)
         self.strategy.pmm = self.pmm
-      
+
     def place_vms(self, vms, host):
         i = 0
         while i < len(vms):
@@ -59,10 +59,10 @@ class Manager:
         for host in self.pmm.items:
             result += len(host.vms)
         return result
-      
+
     def unplaced_vms(self):
         return self.total_vm - self.placed_vms()
-      
+
     def solve_hosts(self):
         for host in self.pmm.items:
             if self.vmm.items != []:
@@ -74,27 +74,27 @@ class Manager:
                 if not isinstance(self.strategy, EnergyUnawareStrategyPlacement):
                     host.suspend()
                 print(host)
-        
+
     def calculate_power_consumed(self):
         result = 0
         for host in self.pmm.items:
             result += host.estimate_consumed_power()
         return result
-    
+
     def calculate_physical_hosts_used(self):
         result = 0
         for host in self.pmm.items:
             if host.vms != []:
                 result += 1
         return result
-    
+
     def calculate_physical_hosts_suspended(self):
         result = 0
         for host in self.pmm.items:
             if host.suspended:
                 result += 1
         return result
-    
+
     def calculate_physical_hosts_idle(self):
         result = 0
         for host in self.pmm.items:

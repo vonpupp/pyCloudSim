@@ -31,11 +31,11 @@ class Simulator:
     def __init__(self):
         self.results = []
         self.writer = None
-    
+
     def csv_write_simulation(self, fout):
         self.out_file = open(fout, 'wb')
         #out_file = open(fout, 'a+')
-        
+
         self.writer = csv.writer(self.out_file, delimiter='\t')
         header = ['#PM', '#VM',
                   '#PM-U', '#PM-S', '#PM-I',
@@ -45,7 +45,7 @@ class Simulator:
                   #'ST', 'ET',
                   'T']
         self.writer.writerow(header)
-        
+
     def csv_append_scenario(self, scenario):
         #for r in self.results:
         r = self.results[scenario]
@@ -58,17 +58,17 @@ class Simulator:
               r['strategy'].__class__.__name__,
               #r['start_time'], r['end_time'],
               r['elapsed_time']])
-        
+
     def csv_close_simulation(self):
         self.out_file.close()
-        
+
     def pickle_writer(self, fout):
         try:
             out_file = open(fout, 'wb')
             pickle.dump(self.results, out_file)
         except:
             pass
-        
+
     def simulate_scenario(self, strategy, trace_file, pms, vms):
         result = {}
         result['start_time'] = time.time()

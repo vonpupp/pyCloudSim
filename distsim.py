@@ -78,6 +78,7 @@ if __name__ == "__main__":
     parser.add_argument('-seu', '--simeu', help='Simulate Energy Unaware', required=False)
     parser.add_argument('-sksp', '--simksp', help='Simulate Iterated-KSP', required=False)
     parser.add_argument('-sec', '--simec', help='Simulate Iterated-EC', required=False)
+    parser.add_argument('-seccpu', '--simeccpu', help='Simulate Iterated-EC-CPU', required=False)
     args = parser.parse_args()
 
     pmcount = int(get_default_arg(72, args.pmcount))
@@ -89,6 +90,7 @@ if __name__ == "__main__":
     simulate_eu = bool(get_default_arg(0, args.simeu))
     simulate_ksp = bool(get_default_arg(0, args.simksp))
     simulate_ec = bool(get_default_arg(0, args.simec))
+    simulate_ec_cpu = bool(get_default_arg(0, args.simeccpu))
 
     s = Simulator()
 
@@ -113,4 +115,8 @@ if __name__ == "__main__":
         strategy = EvolutionaryComputationStrategyPlacement()
         s.simulate_strategy(strategy, trace_file, pms_scenarios, vms_scenarios)
 
+    if simulate_ec_cpu:
+        from distsim.strategies.iteratedeccpu import EvolutionaryComputationStrategyPlacementCPU
+        strategy = EvolutionaryComputationStrategyPlacementCPU()
+        s.simulate_strategy(strategy, trace_file, pms_scenarios, vms_scenarios)
     print('done')
