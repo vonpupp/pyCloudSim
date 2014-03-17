@@ -1,26 +1,5 @@
 #!/usr/bin/env python
 # vim:ts=4:sts=4:sw=4:et:wrap:ai:fileencoding=utf-8:
-#
-# Copyright 2013 Albert De La Fuente
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-"""
-Trace Generator Model
-"""
-__version__ = "0.1"
-__author__  = "Albert De La Fuente"
-
 
 import collections
 #import matplotlib.pyplot as plt
@@ -28,17 +7,18 @@ import collections
 factor = 1/4
 
 class TraceGenerator():
-  
-      
+
+
     def __init__(self, fname):
         #fname='planetlab-selected/planetlab-20110420-filtered_pluto_cs_brown_edu_root'
         #fname='planetlab-workload-traces/merkur_planetlab_haw-hamburg_de_ yale_p4p'
         self.fname = fname
-        with open(self.fname) as f:
-            self.lines = f.readlines()
-            self.cpu = map(int, self.lines)
-      
+
     def gen_cpu_trace(self):
+#        with open(self.fname) as f:
+#            self.lines = f.readlines()
+        self.trace_loader()
+        self.cpu = map(int, self.lines)
         return self.cpu
 
     def gen_mem_trace(self):
@@ -55,14 +35,37 @@ class TraceGenerator():
         self.net = collections.deque(self.cpu)
         self.net.rotate(3*len(self.cpu)/4)
         return self.net
-      
+
     def gen_trace(self):
-        self.gen_cpu_trace()
-        self.gen_mem_trace()
-        self.gen_disk_trace()
-        self.gen_net_trace()
+        if self.fname == 'hybrid1':
+           self.gen_hybrid1()
+        else:
+            self.gen_cpu_trace()
+            self.gen_mem_trace()
+            self.gen_disk_trace()
+            self.gen_net_trace()
         self.trace = zip(self.cpu, self.mem, self.disk, self.net)
         return self.trace
+
+    def trace_loader(self):
+        with open(self.fname) as f:
+            self.lines = f.readlines()
+
+    def gen_hybrid1(self):
+        self.fname = '../planetlab-workload-traces/20110409/146-179_surfsnel_dsl_internl_net_root'
+        self.trace_loader()
+        self.cpu = map(int, self.lines)
+        self.fname = '../planetlab-workload-traces/20110420/plgmu4_ite_gmu_edu_rnp_dcc_ufjf'
+        self.trace_loader()
+        self.mem = map(int, self.lines)
+        self.fname = '../planetlab-workload-traces/20110409/host4-plb_loria_fr_uw_oneswarm'
+        self.trace_loader()
+        self.disk = map(int, self.lines)
+        self.fname = '../planetlab-workload-traces/20110309/planetlab1_fct_ualg_pt_root'
+        self.trace_loader()
+        self.net = map(int, self.lines)
+#        self.trace = zip(self.cpu, self.mem, self.disk, self.net)
+#        return self.trace
 
 #tg = TraceGenerator()
 #cpu = tg.gen_cpu_trace()
