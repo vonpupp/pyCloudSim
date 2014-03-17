@@ -69,16 +69,16 @@ class SummarizeData():
                             d[attribute] = [str(value)]
             self.summary_list.append(d)
         #print self.summary_list
-    
+
     def get_vms_scenarios(self):
         self.vms_scenarios = []
         for vms in self.summary_list:
             self.vms_scenarios += [int(vms['#VM'][0])]
-    
+
     def map_column(self, scenario, column, selector):
         return selector(scenario[column])
         #return map(selector, l)
-    
+
     def best_worst_average_cases(self, scenario, column, bselector, wselector, mselector):
         best_case = self.best_case[len(self.best_case)-1]
         best_case[column] = self.map_column(scenario, column, bselector)
@@ -89,7 +89,7 @@ class SummarizeData():
         except:
             best_case[column + '-95m'] = 0
             best_case[column + '-95h'] = 0
-            
+
         worst_case = self.worst_case[len(self.worst_case)-1]
         worst_case[column] = self.map_column(scenario, column, wselector)
         #test = scipy.stats.norm.interval(0.95, loc=mean, scale=std)
@@ -100,7 +100,7 @@ class SummarizeData():
         except:
             worst_case[column + '-95m'] = 0
             worst_case[column + '-95h'] = 0
-        
+
         average_case = self.average_case[len(self.average_case)-1]
         average_case[column] = self.map_column(scenario, column, mselector)
         try:
@@ -110,10 +110,10 @@ class SummarizeData():
         except:
             average_case[column + '-95m'] = 0
             average_case[column + '-95h'] = 0
-    
+
     def first_item(self, l):
         return l[0]
-        
+
     def summarize_attributes(self):
         self.worst_case = []
         self.best_case = []
@@ -156,7 +156,7 @@ class SummarizeData():
         self.get_vms_scenarios()
         return self.best_case, self.worst_case, self.average_case
         #print 'ok'
-        
+
     def summarize_trace(self, trace_file):
         pass
 
@@ -164,7 +164,7 @@ class SummarizeData():
         self.fname = fname
         self.file_out = open(self.fname, mode='w')
         self.writer = csv.DictWriter(self.file_out, fieldnames=fields, delimiter='\t', quoting=csv.QUOTE_NONE)
-        
+
         headers = dict((n,n) for n in fields)
         self.writer.writerow(headers)
         for scenario in summarized_data:
@@ -174,15 +174,15 @@ class SummarizeData():
 
     def csv_write(self):
         fields = self.best_case[0].keys()
-        
+
         data = self.best_case
         fname = os.path.join(self.working_dir, self.pattern + '-best.csv')
         self.csv_write_summary(fname, fields, data)
-        
+
         data = self.worst_case
         fname = os.path.join(self.working_dir, self.pattern + '-worst.csv')
         self.csv_write_summary(fname, fields, data)
-        
+
         data = self.average_case
         fname = os.path.join(self.working_dir, self.pattern + '-average.csv')
         self.csv_write_summary(fname, fields, data)
