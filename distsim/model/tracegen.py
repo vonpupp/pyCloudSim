@@ -39,6 +39,16 @@ class TraceGenerator():
     def gen_trace(self):
         if self.fname == 'hybrid1':
            self.gen_hybrid1()
+        elif self.fname == 'hybrid2':
+           self.gen_hybrid2()
+        elif self.fname == 'hybrid3':
+           self.gen_hybrid3()
+        elif self.fname == 'hybrid4':
+           self.gen_hybrid4()
+        elif self.fname == 'hybrid5':
+           self.gen_hybrid5()
+        elif self.fname == 'hybrid6':
+           self.gen_hybrid6()
         else:
             self.gen_cpu_trace()
             self.gen_mem_trace()
@@ -51,7 +61,12 @@ class TraceGenerator():
         with open(self.fname) as f:
             self.lines = f.readlines()
 
-    def gen_hybrid1(self):
+    # CPU: T1
+    # MEM: T3
+    # DISK: T2
+    # NET: T4
+    # Conclusion: Notable optimization with ksp-mem
+    def gen_hybrid1(self):  # T1 T3 T2 T4
         self.fname = '../planetlab-workload-traces/20110409/146-179_surfsnel_dsl_internl_net_root'
         self.trace_loader()
         self.cpu = map(int, self.lines)
@@ -64,16 +79,106 @@ class TraceGenerator():
         self.fname = '../planetlab-workload-traces/20110309/planetlab1_fct_ualg_pt_root'
         self.trace_loader()
         self.net = map(int, self.lines)
-#        self.trace = zip(self.cpu, self.mem, self.disk, self.net)
-#        return self.trace
 
-#tg = TraceGenerator()
-#cpu = tg.gen_cpu_trace()
-#mem = tg.gen_mem_trace()
-#disk = tg.gen_disk_trace()
-#net = tg.gen_net_trace()
-#trace = zip(cpu, mem, disk, net)
+    # CPU: T3
+    # MEM: T1
+    # DISK: T2
+    # NET: T1 (shifted)
+    # Conclusion:
+    def gen_hybrid2(self):
+        self.fname = '../planetlab-workload-traces/20110420/plgmu4_ite_gmu_edu_rnp_dcc_ufjf'
+        self.trace_loader()
+        self.cpu = map(int, self.lines)
+        self.fname = '../planetlab-workload-traces/20110409/146-179_surfsnel_dsl_internl_net_root'
+        self.trace_loader()
+        self.mem = map(int, self.lines)
+        self.fname = '../planetlab-workload-traces/20110409/host4-plb_loria_fr_uw_oneswarm'
+        self.trace_loader()
+        self.disk = map(int, self.lines)
+        self.fname = '../planetlab-workload-traces/20110409/146-179_surfsnel_dsl_internl_net_root'
+        self.trace_loader()
+        self.net = map(int, self.lines)
+        self.net.rotate(3*len(self.cpu)/4)
 
-#print trace
-#plt.bar(range(0,len(cpu)), cpu)
-#plt.show()
+    # CPU: New with mean 15, std 7.31 and var 53.51
+    # MEM: T1
+    # DISK: T2
+    # NET: T1 (shifted)
+    # Conclusion:
+    def gen_hybrid3(self):
+        self.fname = '../planetlab-workload-traces/20110322/planetlab1_williams_edu_uw_oneswarm'
+        self.trace_loader()
+        self.cpu = map(int, self.lines)
+        self.fname = '../planetlab-workload-traces/20110409/146-179_surfsnel_dsl_internl_net_root'
+        self.trace_loader()
+        self.mem = map(int, self.lines)
+        self.fname = '../planetlab-workload-traces/20110409/host4-plb_loria_fr_uw_oneswarm'
+        self.trace_loader()
+        self.disk = map(int, self.lines)
+        self.fname = '../planetlab-workload-traces/20110409/146-179_surfsnel_dsl_internl_net_root'
+        self.trace_loader()
+        self.net = map(int, self.lines)
+        self.net.rotate(3*len(self.cpu)/4)
+
+    # CPU: New with mean 15, std 7.31 and var 53.51
+    # MEM: T3
+    # DISK: Same as CPU (shifted)
+    # NET: T1 (shifted)
+    # Conclusion:
+    def gen_hybrid4(self):
+        self.fname = '../planetlab-workload-traces/20110322/planetlab1_williams_edu_uw_oneswarm'
+        self.trace_loader()
+        self.cpu = map(int, self.lines)
+        self.fname = '../planetlab-workload-traces/20110420/plgmu4_ite_gmu_edu_rnp_dcc_ufjf'
+        self.trace_loader()
+        self.mem = map(int, self.lines)
+        self.fname = '../planetlab-workload-traces/20110322/planetlab1_williams_edu_uw_oneswarm'
+        self.trace_loader()
+        self.disk = map(int, self.lines)
+        self.disk.rotate(3*len(self.cpu)/4)
+        self.fname = '../planetlab-workload-traces/20110409/146-179_surfsnel_dsl_internl_net_root'
+        self.trace_loader()
+        self.net = map(int, self.lines)
+        self.net.rotate(3*len(self.cpu)/4)
+
+    # CPU: New with mean 25 std 6 and var 37
+    # MEM: T3
+    # DISK: Same as CPU (shifted)
+    # NET: mean 15
+    # Conclusion:
+    def gen_hybrid5(self):
+        self.fname = '../planetlab-workload-traces/20110322/planetlab2_millennium_berkeley_edu_root'
+        self.trace_loader()
+        self.cpu = map(int, self.lines)
+        self.fname = '../planetlab-workload-traces/20110420/plgmu4_ite_gmu_edu_rnp_dcc_ufjf'
+        self.trace_loader()
+        self.mem = map(int, self.lines)
+        self.fname = '../planetlab-workload-traces/20110322/planetlab1_williams_edu_uw_oneswarm'
+        self.trace_loader()
+        self.disk = map(int, self.lines)
+        self.disk.rotate(3*len(self.cpu)/4)
+        self.fname = '../planetlab-workload-traces/20110409/146-179_surfsnel_dsl_internl_net_root'
+        self.trace_loader()
+        self.net = map(int, self.lines)
+        self.net.rotate(3*len(self.cpu)/4)
+
+    # CPU: New with mean 25 std 6 and var 37
+    # MEM: T3
+    # DISK: Same as CPU (shifted)
+    # NET: mean 15
+    # Conclusion:
+    def gen_hybrid6(self):
+        self.fname = '../planetlab-workload-traces/20110322/planetlab1_williams_edu_uw_oneswarm'
+        self.trace_loader()
+        self.cpu = map(int, self.lines)
+        self.fname = '../planetlab-workload-traces/20110322/planetlab2_millennium_berkeley_edu_root'
+        self.trace_loader()
+        self.mem = map(int, self.lines)
+        self.fname = '../planetlab-workload-traces/20110322/planetlab1_williams_edu_uw_oneswarm'
+        self.trace_loader()
+        self.disk = map(int, self.lines)
+        self.disk.rotate(3*len(self.cpu)/4)
+        self.fname = '../planetlab-workload-traces/20110409/146-179_surfsnel_dsl_internl_net_root'
+        self.trace_loader()
+        self.net = map(int, self.lines)
+        self.net.rotate(3*len(self.cpu)/4)
