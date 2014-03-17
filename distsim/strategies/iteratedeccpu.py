@@ -135,8 +135,8 @@ def my_evaluator(candidate, args):
 #    if fitness > 0:
 #        fitness *= math.pow(99 - totals['cpu'], 2)
     if fitness > 0:
-        resource_weights = ((totals['cpu'] * 4) + totals['mem'] + \
-            (totals['disk'] * 2) + (totals['net'] * 3) / 100)
+        resource_weights = ((totals['cpu'] * 1) + (totals['mem'] * 7) + \
+            (totals['disk'] * 1) + (totals['net'] * 1) / 100)
         ratio = totals['weight'] / resource_weights
         fitness = ratio * 10
 #    logging.debug('my_evaluator: fitness2 = {}\n'.format(fitness))
