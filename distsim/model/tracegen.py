@@ -49,6 +49,8 @@ class TraceGenerator():
            self.gen_hybrid5()
         elif self.fname == 'hybrid6':
            self.gen_hybrid6()
+        elif self.fname == 'hybrid7':
+           self.gen_hybrid7()
         else:
             self.gen_cpu_trace()
             self.gen_mem_trace()
@@ -98,7 +100,8 @@ class TraceGenerator():
         self.fname = '../planetlab-workload-traces/20110409/146-179_surfsnel_dsl_internl_net_root'
         self.trace_loader()
         self.net = map(int, self.lines)
-        self.net.rotate(3*len(self.cpu)/4)
+        self.net = collections.deque(self.net)
+        self.net.rotate(3*len(self.net)/4)
 
     # CPU: New with mean 15, std 7.31 and var 53.51
     # MEM: T1
@@ -117,8 +120,11 @@ class TraceGenerator():
         self.disk = map(int, self.lines)
         self.fname = '../planetlab-workload-traces/20110409/146-179_surfsnel_dsl_internl_net_root'
         self.trace_loader()
+        #self.net = map(int, self.lines)
+        #self.net.rotate(3*len(self.cpu)/4)
         self.net = map(int, self.lines)
-        self.net.rotate(3*len(self.cpu)/4)
+        self.net = collections.deque(self.net)
+        self.net.rotate(3*len(self.net)/4)
 
     # CPU: New with mean 15, std 7.31 and var 53.51
     # MEM: T3
@@ -135,15 +141,19 @@ class TraceGenerator():
         self.fname = '../planetlab-workload-traces/20110322/planetlab1_williams_edu_uw_oneswarm'
         self.trace_loader()
         self.disk = map(int, self.lines)
-        self.disk.rotate(3*len(self.cpu)/4)
+        self.disk = collections.deque(self.disk)
+        self.disk.rotate(3*len(self.disk)/4)
         self.fname = '../planetlab-workload-traces/20110409/146-179_surfsnel_dsl_internl_net_root'
         self.trace_loader()
+        #self.net = map(int, self.lines)
+        #self.net.rotate(3*len(self.cpu)/4)
         self.net = map(int, self.lines)
-        self.net.rotate(3*len(self.cpu)/4)
+        self.net = collections.deque(self.net)
+        self.net.rotate(3*len(self.net)/4)
 
     # CPU: New with mean 25 std 6 and var 37
     # MEM: T3
-    # DISK: Same as CPU (shifted)
+    # DISK: mean 15
     # NET: mean 15
     # Conclusion:
     def gen_hybrid5(self):
@@ -155,12 +165,18 @@ class TraceGenerator():
         self.mem = map(int, self.lines)
         self.fname = '../planetlab-workload-traces/20110322/planetlab1_williams_edu_uw_oneswarm'
         self.trace_loader()
+        #self.disk = map(int, self.lines)
+        #self.disk.rotate(3*len(self.cpu)/4)
         self.disk = map(int, self.lines)
-        self.disk.rotate(3*len(self.cpu)/4)
+        self.disk = collections.deque(self.disk)
+        self.disk.rotate(3*len(self.disk)/4)
         self.fname = '../planetlab-workload-traces/20110409/146-179_surfsnel_dsl_internl_net_root'
         self.trace_loader()
+        #self.net = map(int, self.lines)
+        #self.net.rotate(3*len(self.cpu)/4)
         self.net = map(int, self.lines)
-        self.net.rotate(3*len(self.cpu)/4)
+        self.net = collections.deque(self.net)
+        self.net.rotate(3*len(self.net)/4)
 
     # CPU: New with mean 25 std 6 and var 37
     # MEM: T3
@@ -176,9 +192,42 @@ class TraceGenerator():
         self.mem = map(int, self.lines)
         self.fname = '../planetlab-workload-traces/20110322/planetlab1_williams_edu_uw_oneswarm'
         self.trace_loader()
+#        self.disk = map(int, self.lines)
+#        self.disk.rotate(3*len(self.cpu)/4)
         self.disk = map(int, self.lines)
-        self.disk.rotate(3*len(self.cpu)/4)
+        self.disk = collections.deque(self.disk)
+        self.disk.rotate(3*len(self.disk)/4)
         self.fname = '../planetlab-workload-traces/20110409/146-179_surfsnel_dsl_internl_net_root'
         self.trace_loader()
+#        self.net = map(int, self.lines)
+#        self.net.rotate(3*len(self.cpu)/4)
         self.net = map(int, self.lines)
-        self.net.rotate(3*len(self.cpu)/4)
+        self.net = collections.deque(self.net)
+        self.net.rotate(3*len(self.net)/4)
+
+    # CPU: New with mean 35 std 38 and var 1484
+    # MEM: T3
+    # DISK: Same as CPU (shifted)
+    # NET: mean 15
+    # Conclusion:
+    def gen_hybrid7(self):
+        self.fname = '../planetlab-workload-traces/20110409/planetlab1_s3_kth_se_sics_peerialism'
+        self.trace_loader()
+        self.cpu = map(int, self.lines)
+        self.fname = '../planetlab-workload-traces/20110322/planetlab2_millennium_berkeley_edu_root'
+        self.trace_loader()
+        self.mem = map(int, self.lines)
+        self.fname = '../planetlab-workload-traces/20110322/planetlab1_williams_edu_uw_oneswarm'
+        self.trace_loader()
+#        self.disk = map(int, self.lines)
+#        self.disk.rotate(3*len(self.cpu)/4)
+        self.disk = map(int, self.lines)
+        self.disk = collections.deque(self.disk)
+        self.disk.rotate(3*len(self.disk)/4)
+        self.fname = '../planetlab-workload-traces/20110322/planetlab1_williams_edu_uw_oneswarm'
+        self.trace_loader()
+#        self.net = map(int, self.lines)
+#        self.net.rotate(3*len(self.cpu)/4)
+        self.net = map(int, self.lines)
+        self.net = collections.deque(self.net)
+        self.net.rotate(3*len(self.net)/4)
