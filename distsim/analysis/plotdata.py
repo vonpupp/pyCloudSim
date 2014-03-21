@@ -97,8 +97,8 @@ class GraphGenerator:
         ax.plot(x2, y2a, color='red', ls='-', marker='.', label=self.legend(data_ref[0]['strategy']))
         ax.plot(x2, y2b, color='blue', ls='-', marker='o', label=self.legend(data1[0]['strategy']))
         ax.plot(x2, y2c, color='green', ls='-', marker='s', label=self.legend(data2[0]['strategy']))
-        ax.plot(x2, y2d, color='purple', ls='-', marker='o', label=self.legend(data3[0]['strategy']))
-        ax.plot(x2, y2e, color='magenta', ls='-', marker='s', label=self.legend(data3[0]['strategy']))
+        ax.plot(x2, y2d, color='purple', ls='-.', marker='o', label=self.legend(data3[0]['strategy']))
+        ax.plot(x2, y2e, color='magenta', ls='-.', marker='s', label=self.legend(data3[0]['strategy']))
         #ax.fill(y2a, y2b, alpha=0.3)
         ax.set_xlabel(x_title, fontsize=18)
         ax.set_ylabel(y_title, fontsize=18)
@@ -115,6 +115,10 @@ class GraphGenerator:
         p = fill_between(ax, x2, y2b, y2c, facecolor='b')
         p.set_alpha(0.2)
 
+        # Coloring the area between EC and KSP-MEM
+        p = fill_between(ax, x2, y2c, y2d, facecolor='m')
+        p.set_alpha(0.1)
+
 #        p = fill_between(ax, x2, y2b, y2c, facecolor='b')
 #        p.set_alpha(0.2)
 
@@ -126,8 +130,8 @@ class GraphGenerator:
 
         # Put a legend below current axis
         #ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, shadow=False, ncol=5)
-        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15),
-            fancybox=True, shadow=False, ncol=5)
+        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.14),
+            fancybox=False, shadow=False, ncol=2)
 
         plt.savefig(self.result_dir + '/figure-' + trace_file + '-' +
             str(hosts_scenario).zfill(3) + '-' +
