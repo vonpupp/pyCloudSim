@@ -1,30 +1,10 @@
-# Copyright 2013 Albert De La Fuente
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-"""
-Simulation Manager
-"""
-__version__ = "0.1"
-__author__  = "Albert De La Fuente"
-
-
 import datetime
 import time
 import csv
 import pickle
 import os
 from manager import Manager
+from distsim.analysis.louvain import *
 
 
 class Simulator:
@@ -61,6 +41,48 @@ class Simulator:
 
     def csv_close_simulation(self):
         self.out_file.close()
+
+    def csv_generate_graph(self, scenario, vmscount, fout):
+        fh = open(fout, 'wb')
+        writer = csv.writer(fh, delimiter='\t')
+        hosts = self.results[scenario]['manager'].pmm.items
+
+
+        n = Network()
+        #for v1, v2 in [(1,2),(1,3),(1,10),(2,3),(4,5),(4,6),(4,10),(5,6),(7,8),(7,9),(7,10),(8,9)]:
+        #for v1, v2 in [(1,5), (2,3), (2,4), (2,5), (3,5)]:
+#        for v1, v2 in [(0,2),(0,3),(0,4),(0,5),(1,2),(1,4),(1,7),(2,4),(2,5),(2,6),(3,7),(4,10),(5,7),(5,11),(6,7),(6,11),
+#                    (8,9),(8,10),(8,11),(8,14),(8,15),(9,12),(9,14),(10,11),(10,12),(10,13),(10,14),(11,13)]:
+#            n.add_edge(v1, v2, 1)
+
+        matrix = []
+#        matrix = [[0]*vmscount]*vmscount
+        for r in range(0, vmscount):
+            matrix.append([0 for c in range(0, vmscount)])
+
+        for host in hosts:
+            for vm1 in host.vms:
+                vm1id = int(vm1.id)
+                for vm2 in host.vms:
+                    vm2id = int(vm2.id)
+                    if vm1id is not vm2id:
+                        matrix[vm1id][vm2id] = matrix[vm1id][vm2id] + 1
+                        matrix[vm2id][vm1id] = matrix[vm2id][vm1id] + 1
+                        n.add_edge(vm1id, vm2id, 1)
+            #result += row
+
+#        print n
+#        print n.size("edge"), 'edges'
+#        print n.size("vertex"), 'vertices'
+
+#        t = louvainmethod(n, True)
+#        import ipdb; ipdb.set_trace() # BREAKPOINT
+
+        header = [None] + [str(vm).zfill(2) for vm in range(0, vmscount)]
+        writer.writerow(header)
+        for vm, row in enumerate(matrix):
+            writer.writerow([str(vm).zfill(2)] + row)
+        fh.close()
 
     def pickle_writer(self, fout):
         try:
@@ -100,6 +122,7 @@ class Simulator:
             self.csv_write_simulation('results/simulation-{}-{}-{}-{}.csv'.format(trace_filename, strategy.__class__.__name__, str(pms).zfill(3), stamp))
             for vms in vms_scenarios:
                 scenario = self.simulate_scenario(strategy, trace_file, pms, vms)
+                self.csv_generate_graph(scenario, vms, 'results/graph-{}-{}-{}-{}-{}.csv'.format(trace_filename, strategy.__class__.__name__, str(pms).zfill(3), str(vms).zfill(3), stamp))
                 self.csv_append_scenario(scenario)
             self.csv_close_simulation()
         self.pickle_writer('results/pickle-{}.pkl'.format(stamp))

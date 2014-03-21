@@ -68,6 +68,7 @@ class Manager:
             if self.vmm.items != []:
                 solution = self.strategy.solve_host()
                 vms = self.strategy.get_vm_objects(solution)
+                #import ipdb; ipdb.set_trace() # BREAKPOINT
                 if vms is not None:
                     self.place_vms(vms, host)
             else:
