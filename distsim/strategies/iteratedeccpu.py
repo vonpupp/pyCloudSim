@@ -1,24 +1,3 @@
-# Copyright 2013 Albert De La Fuente
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-"""
-Iterated EC Strategy Placement
-"""
-__version__ = "0.1"
-__author__ = "Albert De La Fuente"
-
-
 import inspyred
 import random
 import time
@@ -78,7 +57,6 @@ def cdf(weights):
         result.append(cumsum / total)
     return result
 
-
 def choice(population, weights):
     assert len(population) == len(weights)
     cdf_vals = cdf(weights)
@@ -98,20 +76,6 @@ def my_generator(random, args):
 #    counts = collections.defaultdict(int)
 #    counts[choice(population, weights)] += 1
 #    print(counts)
-
-#@inspyred.ec.evaluators.evaluator
-#def my_evaluator(candidate, args):
-#    items = args['items']
-#    totals = {}
-#    for metric in ['weight', 'cpu', 'mem', 'disk', 'net']:
-#        for i, c in enumerate(candidate):
-#            if c == 1:
-#                totals[metric] = sum(items[i][1][metric])
-##        totals[metric] = sum([items[i][1][metric] for i, c in enumerate(candidate) if c == 1])
-#    constraints = [max(0, totals[c] - 99) for c in ['cpu', 'mem', 'disk', 'net']]
-#    fitness = totals['weight'] - sum(constraints)
-#    #print fitness
-#    return fitness
 
 @inspyred.ec.evaluators.evaluator
 def my_evaluator(candidate, args):
@@ -135,10 +99,12 @@ def my_evaluator(candidate, args):
 #    if fitness > 0:
 #        fitness *= math.pow(99 - totals['cpu'], 2)
     if fitness > 0:
-        resource_weights = ((totals['cpu'] * 1) + (totals['mem'] * 7) + \
-            (totals['disk'] * 1) + (totals['net'] * 1) / 100)
-        ratio = totals['weight'] / resource_weights
-        fitness = ratio * 10
+#        resource_weights = ((totals['cpu'] * 1) + (totals['mem'] * 7) + \
+#            (totals['disk'] * 1) + (totals['net'] * 1) / 100)
+#        ratio = totals['weight'] / resource_weights
+        ratio = totals['weight'] * totals['net']
+        fitness = ratio
+#        fitness = ratio * 10
 #    logging.debug('my_evaluator: fitness2 = {}\n'.format(fitness))
 
     return fitness
@@ -204,6 +170,9 @@ class EvolutionaryComputationStrategyPlacementCPU:
     def set_vmm(self, vmm):
         self.vmm = vmm
         self.items = self.vmm.items
+
+    def set_base_graph_name(self, base_graph_name):
+        self.base_graph_name = base_graph_name
 
     def solve_host(self):
         prng = random.Random()
