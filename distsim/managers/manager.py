@@ -42,6 +42,8 @@ class Manager:
 
     def set_strategy(self, strategy):
         self.strategy = strategy
+        if self.base_graph_name:
+            self.strategy.set_base_graph_name(self.base_graph_name)
         self.strategy.set_vmm(self.vmm)
         self.strategy.pmm = self.pmm
 

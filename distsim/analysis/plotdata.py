@@ -67,7 +67,7 @@ class GraphGenerator:
         trans['EnergyUnawareStrategyPlacement'] = 'Energy unaware'
         trans['OpenOptStrategyPlacement'] = 'Iterated-KSP'
         trans['EvolutionaryComputationStrategyPlacement'] = 'Iterated-EC'
-        trans['OpenOptStrategyPlacementMem'] = 'Iterated-KSP-Mem-double'
+        trans['OpenOptStrategyPlacementMem'] = 'Iterated-KSP-Mem'
         trans['EvolutionaryComputationStrategyPlacementCPU'] = 'Iterated-EC-CPU'
         return trans[title]
 
@@ -98,7 +98,7 @@ class GraphGenerator:
         ax.plot(x2, y2b, color='blue', ls='-', marker='o', label=self.legend(data1[0]['strategy']))
         ax.plot(x2, y2c, color='green', ls='-', marker='s', label=self.legend(data2[0]['strategy']))
         ax.plot(x2, y2d, color='purple', ls='-.', marker='o', label=self.legend(data3[0]['strategy']))
-        ax.plot(x2, y2e, color='magenta', ls='-.', marker='s', label=self.legend(data3[0]['strategy']))
+        ax.plot(x2, y2e, color='magenta', ls='-.', marker='s', label=self.legend(data4[0]['strategy']))
         #ax.fill(y2a, y2b, alpha=0.3)
         ax.set_xlabel(x_title, fontsize=18)
         ax.set_ylabel(y_title, fontsize=18)
@@ -109,21 +109,42 @@ class GraphGenerator:
 
         ax = fig.gca()
 
-        p = fill_between(ax, x2, y2a, y2b, facecolor='g')
-        p.set_alpha(0.2)
+        #y2a energy-unaware
+        #y2b ksp
+        #y2c ec
+        #y2d ksp-mem
+        #y2e ec-cpu
 
-        p = fill_between(ax, x2, y2b, y2c, facecolor='b')
-        p.set_alpha(0.2)
-
-        # Coloring the area between EC and KSP-MEM
-        p = fill_between(ax, x2, y2c, y2d, facecolor='m')
+        # Coloring KSP vs energy-unaware
+        p = fill_between(ax, x2, y2a, y2b, facecolor='b')
         p.set_alpha(0.1)
+
+        # Coloring EC vs KSP
+        p = fill_between(ax, x2, y2b, y2c, facecolor='g')
+        p.set_alpha(0.1)
+
+        # Coloring EC vs KSP-MEM
+        p = fill_between(ax, x2, y2b, y2d, facecolor='m')
+        p.set_alpha(0.1)
+
+#        # Coloring KSP vs energy-unaware
+#        p = fill_between(ax, x2, y2a, y2b, facecolor='g')
+#        p.set_alpha(0.2)
+#
+#        # Coloring EC vs KSP
+#        p = fill_between(ax, x2, y2b, y2c, facecolor='b')
+#        p.set_alpha(0.2)
+#
+#        # Coloring EC vs KSP-MEM
+#        p = fill_between(ax, x2, y2b, y2d, facecolor='m')
+#        p.set_alpha(0.1)
 
 #        p = fill_between(ax, x2, y2b, y2c, facecolor='b')
 #        p.set_alpha(0.2)
 
         plt.grid(True)
         box = ax.get_position()
+#        import ipdb; ipdb.set_trace() # BREAKPOINT
         #ax.set_position([box.x0, box.y0 + box.height * 0.1, box.width, box.height * 0.9])
         ax.set_position([box.x0, box.y0 + box.height * 0.2,
             box.width, box.height * 0.8])

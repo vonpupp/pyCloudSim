@@ -84,6 +84,27 @@ class Simulator:
             writer.writerow([str(vm).zfill(2)] + row)
         fh.close()
 
+    def csv_write_placement(self, scenario, vmscount, fout):
+        fh = open(fout, 'wb')
+        writer = csv.writer(fh, delimiter='\t')
+        hosts = self.results[scenario]['manager'].pmm.items
+
+        matrix = []
+        for r in range(0, vmscount):
+            matrix.append([0 for c in range(0, vmscount)])
+
+        header = ['Host', 'VM', 'CPU', 'Mem', 'disk', 'net']
+        writer.writerow(header)
+
+        for host in hosts:
+            for vm in host.vms:
+                vmid = int(vm.id)
+#               import ipdb; ipdb.set_trace() # BREAKPOINT
+                writer.writerow([host.id, vm.id,
+                    vm.value['cpu'], vm.value['mem'], vm.value['disk'], vm.value['net']])
+
+        fh.close()
+
     def pickle_writer(self, fout):
         try:
             out_file = open(fout, 'wb')
@@ -100,6 +121,8 @@ class Simulator:
         result['virtual_mahines_count'] = vms
         m.set_vm_count(trace_file, vms)
         result['strategy'] = strategy
+        if self.base_graph_name:
+            m.base_graph_name = self.base_graph_name
         m.set_strategy(strategy)
         m.solve_hosts()
         result['placement'] = m.pmm
@@ -121,8 +144,10 @@ class Simulator:
         for pms in pms_scenarios:
             self.csv_write_simulation('results/simulation-{}-{}-{}-{}.csv'.format(trace_filename, strategy.__class__.__name__, str(pms).zfill(3), stamp))
             for vms in vms_scenarios:
+                self.base_graph_name = 'results/graph-{}-{}-{}-{}-'.format(trace_filename, strategy.__class__.__name__, str(pms).zfill(3), str(vms).zfill(3))
                 scenario = self.simulate_scenario(strategy, trace_file, pms, vms)
                 self.csv_generate_graph(scenario, vms, 'results/graph-{}-{}-{}-{}-{}.csv'.format(trace_filename, strategy.__class__.__name__, str(pms).zfill(3), str(vms).zfill(3), stamp))
+                self.csv_write_placement(scenario, vms, 'results/placement-{}-{}-{}-{}-{}.csv'.format(trace_filename, strategy.__class__.__name__, str(pms).zfill(3), str(vms).zfill(3), stamp))
                 self.csv_append_scenario(scenario)
             self.csv_close_simulation()
         self.pickle_writer('results/pickle-{}.pkl'.format(stamp))
