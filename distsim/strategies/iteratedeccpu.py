@@ -102,7 +102,9 @@ def my_evaluator(candidate, args):
 #        resource_weights = ((totals['cpu'] * 1) + (totals['mem'] * 7) + \
 #            (totals['disk'] * 1) + (totals['net'] * 1) / 100)
 #        ratio = totals['weight'] / resource_weights
-        ratio = totals['weight'] * totals['net']
+#        ratio = totals['weight'] * totals['net']  # Heuristic 7
+#        ratio = totals['weight'] * (100 - totals['net'])  # Heuristic 8
+        ratio = math.pow(100 - totals['net'], totals['weight'])  # Heuristic 9
         fitness = ratio
 #        fitness = ratio * 10
 #    logging.debug('my_evaluator: fitness2 = {}\n'.format(fitness))
