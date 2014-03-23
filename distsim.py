@@ -77,9 +77,11 @@ if __name__ == "__main__":
     parser.add_argument('-o', '--output', help='Output path', required=True)
     parser.add_argument('-seu', '--simeu', help='Simulate Energy Unaware', required=False)
     parser.add_argument('-sksp', '--simksp', help='Simulate Iterated-KSP', required=False)
+    parser.add_argument('-skspmem', '--simkspmem', help='Simulate Iterated-KSP-CPU', required=False)
+    parser.add_argument('-skspnetgraph', '--simkspnetgraph', help='Simulate Iterated-KSP-Net-Graph', required=False)
     parser.add_argument('-sec', '--simec', help='Simulate Iterated-EC', required=False)
     parser.add_argument('-seccpu', '--simeccpu', help='Simulate Iterated-EC-CPU', required=False)
-    parser.add_argument('-skspmem', '--simkspmem', help='Simulate Iterated-KSP-CPU', required=False)
+    parser.add_argument('-secnetgraph', '--simecnetgraph', help='Simulate Iterated-EC-Net-Graph', required=False)
     args = parser.parse_args()
 
     pmcount = int(get_default_arg(72, args.pmcount))
@@ -90,9 +92,11 @@ if __name__ == "__main__":
     output_path = get_default_arg('results/path', args.output)
     simulate_eu = bool(get_default_arg(0, args.simeu))
     simulate_ksp = bool(get_default_arg(0, args.simksp))
+    simulate_ksp_mem = bool(get_default_arg(0, args.simkspmem))
+    simulate_ksp_net_graph = bool(get_default_arg(0, args.simkspnetgraph))
     simulate_ec = bool(get_default_arg(0, args.simec))
     simulate_ec_cpu = bool(get_default_arg(0, args.simeccpu))
-    simulate_ksp_mem = bool(get_default_arg(0, args.simkspmem))
+    simulate_ec_net_graph = bool(get_default_arg(0, args.simecnetgraph))
 
     s = Simulator()
 
@@ -117,6 +121,11 @@ if __name__ == "__main__":
         strategy = OpenOptStrategyPlacementMem()
         s.simulate_strategy(strategy, trace_file, pms_scenarios, vms_scenarios)
 
+    if simulate_ksp_net_graph:
+        from distsim.strategies.iteratedkspnetgraph import OpenOptStrategyPlacementNetGraph
+        strategy = OpenOptStrategyPlacementNetGraph()
+        s.simulate_strategy(strategy, trace_file, pms_scenarios, vms_scenarios)
+
     if simulate_ec:
         from distsim.strategies.iteratedec import EvolutionaryComputationStrategyPlacement
         strategy = EvolutionaryComputationStrategyPlacement()
@@ -126,4 +135,10 @@ if __name__ == "__main__":
         from distsim.strategies.iteratedeccpu import EvolutionaryComputationStrategyPlacementCPU
         strategy = EvolutionaryComputationStrategyPlacementCPU()
         s.simulate_strategy(strategy, trace_file, pms_scenarios, vms_scenarios)
+
+    if simulate_ec_net_graph:
+        from distsim.strategies.iteratedecnetgraph import EvolutionaryComputationStrategyPlacementNetGraph
+        strategy = EvolutionaryComputationStrategyPlacementNetGraph()
+        s.simulate_strategy(strategy, trace_file, pms_scenarios, vms_scenarios)
+
     print('done')
