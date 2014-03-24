@@ -78,6 +78,9 @@ class EvolutionaryComputationStrategyPlacement:
         self.vmm = vmm
         self.items = self.vmm.items
 
+    def set_base_graph_name(self, base_graph_name):
+        self.base_graph_name = base_graph_name
+
     def solve_host(self):
         prng = random.Random()
         prng.seed(time.time())

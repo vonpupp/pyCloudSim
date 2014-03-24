@@ -54,10 +54,13 @@ class OpenOptStrategyPlacement:
         for item in items_list.xf:
             result += [self.vmm.items[item]]#get_item_values(item)]
         return result
-      
+
     def set_vmm(self, vmm):
         self.vmm = vmm
         self.items = self.vmm.items
+
+    def set_base_graph_name(self, base_graph_name):
+        self.base_graph_name = base_graph_name
 
     def solve_host(self):
         p = KSP('weight', self.items, constraints = self.constraints)

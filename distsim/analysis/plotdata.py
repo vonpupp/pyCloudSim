@@ -407,6 +407,168 @@ class GraphGenerator:
 
 #        method2 = self.get_experiments_files('EnergyUnaware*')
 
+class PlacementGraphGenerator:
+    def __init__(self, result_dir):
+        self.data = None
+        self.vms_scenarios = None
+        self.result_dir = result_dir
+        self.file_list = []
+        self.x_ticks = 5
+
+    def set_data(self, data):
+        self.data = data
+#        self.vms_scenarios = self.data.itervalues().next().vms_scenarios
+
+    def remap_data(self, list_dict, key):
+        l = {}
+        for item in list_dict:
+            try:
+                l += [int(item[key])]
+            except:
+                l = [int(item[key])]
+        return l
+
+    def legend(self, title):
+        trans = {}
+        trans['EnergyUnawareStrategyPlacement'] = 'Energy unaware'
+        trans['OpenOptStrategyPlacement'] = 'Iterated-KSP'
+        trans['EvolutionaryComputationStrategyPlacement'] = 'Iterated-EC'
+        trans['OpenOptStrategyPlacementMem'] = 'Iterated-KSP-Mem'
+        trans['EvolutionaryComputationStrategyPlacementCPU'] = 'Iterated-EC-CPU'
+        return trans[title]
+
+    def vms_ticks(self, vms):
+        result = []
+        for i, vm in enumerate(vms):
+#            if i % 10 == 0:
+            text = '{0:03d}'.format(vm)
+#            else:
+#                text = ' '
+            result += [text]
+        result[-1] = '{0:03d}'.format((len(vms)-1)*self.x_ticks)
+        result[0] = '001'
+        return result
+
+
+    def algorithms_comparison_figure(self, trace_file, hosts_scenario,
+                 data_ref, data1, data2, data3, data4,
+                 x_aspect, y_aspect,
+                 x_title, y_title, title):
+        x2 = map(int, self.remap_data(data_ref, x_aspect))
+        y2a = self.remap_data(data_ref, y_aspect)
+        y2b = self.remap_data(data1, y_aspect)
+        y2c = self.remap_data(data2, y_aspect)
+        y2d = self.remap_data(data3, y_aspect)
+        y2e = self.remap_data(data4, y_aspect)
+
+        #x2 = data_ref[x_aspect]
+        #y2a = data_ref[y_aspect]
+        #y2b = data1[y_aspect]
+        #y2c = data2[y_aspect]
+
+        fig, ax = plt.subplots()
+        #self.remap_data(data_ref, 'strategy')
+#        ax.plot(x2, y2a, color='red', ls='-', marker='.', label=self.legend(data_ref[0]['Strategy']))
+        ax.plot(x2, y2b, color='blue', ls='-', marker='o', label=self.legend(data1[0]['Strategy']))
+        ax.plot(x2, y2c, color='green', ls='-', marker='s', label=self.legend(data2[0]['Strategy']))
+#        ax.plot(x2, y2d, color='purple', ls='-.', marker='o', label=self.legend(data3[0]['Strategy']))
+        ax.plot(x2, y2e, color='magenta', ls='-.', marker='s', label=self.legend(data4[0]['Strategy']))
+        #ax.fill(y2a, y2b, alpha=0.3)
+        ax.set_xlabel(x_title, fontsize=18)
+        ax.set_ylabel(y_title, fontsize=18)
+        ax.set_title(title + ' (' + str(hosts_scenario) + ' hosts)')
+        #ax.legend(loc=2); # upper left corner
+        ax.xaxis.set_ticks(x2)
+#        import ipdb; ipdb.set_trace() # BREAKPOINT
+        pylab.xticks(x2, self.vms_ticks(x2), rotation='vertical', verticalalignment='top')
+
+        ax = fig.gca()
+
+        #y2a energy-unaware
+        #y2b ksp
+        #y2c ec
+        #y2d ksp-mem
+        #y2e ec-cpu
+
+        # Coloring KSP vs energy-unaware
+#        p = fill_between(ax, x2, y2a, y2b, facecolor='b')
+#        p.set_alpha(0.1)
+
+        # Coloring EC vs KSP
+        p = fill_between(ax, x2, y2b, y2c, facecolor='g')
+        p.set_alpha(0.1)
+
+        # Coloring EC vs KSP-MEM
+#        p = fill_between(ax, x2, y2b, y2d, facecolor='m')
+#        p.set_alpha(0.1)
+
+#        # Coloring KSP vs energy-unaware
+#        p = fill_between(ax, x2, y2a, y2b, facecolor='g')
+#        p.set_alpha(0.2)
+#
+        # Coloring EC-CPU vs KSP
+        p = fill_between(ax, x2, y2e, y2c, facecolor='b')
+        p.set_alpha(0.2)
+#
+#        # Coloring EC vs KSP-MEM
+#        p = fill_between(ax, x2, y2b, y2d, facecolor='m')
+#        p.set_alpha(0.1)
+
+#        p = fill_between(ax, x2, y2b, y2c, facecolor='b')
+#        p.set_alpha(0.2)
+
+        plt.grid(True)
+        box = ax.get_position()
+        #ax.set_position([box.x0, box.y0 + box.height * 0.1, box.width, box.height * 0.9])
+        ax.set_position([box.x0, box.y0 + box.height * 0.2,
+            box.width, box.height * 0.8])
+
+        # Put a legend below current axis
+        lg = legend()
+        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.14),
+            fancybox=False, shadow=False, ncol=2)
+#        lg = legend()
+        lg.draw_frame(False)
+
+        plt.savefig(self.result_dir + '/figure-' + trace_file + '-' +
+            str(hosts_scenario).zfill(3) + '-' +
+            title + '.png')
+        plt.close()
+
+    def plot_all_algorithm_comparison(self, trace_file, hosts_scenario):
+        self.hosts_scenario = hosts_scenario
+        self.trace_file = trace_file
+
+        self.data_eu = self.data['EnergyUnawareStrategyPlacement']
+        self.data_ksp = self.data['OpenOptStrategyPlacement']
+        self.data_ec = self.data['EvolutionaryComputationStrategyPlacement']
+        self.data_kspmem = self.data['OpenOptStrategyPlacementMem']
+        self.data_eccpu = self.data['EvolutionaryComputationStrategyPlacementCPU']
+        self.x_key = 'Host'
+        self.x_title = 'Number of Hosts'
+
+        self.y_key = 'net'
+        self.y_title = 'Network load'
+        self.title = 'Overal network load snapshot - 288 VMs'
+
+        data_eu = self.data_eu.data[0][0::self.x_ticks] + [self.data_eu.data[0][-1]]
+        data_ksp = self.data_ksp.data[0][0::self.x_ticks] + [self.data_ksp.data[0][-1]]
+        data_ec = self.data_ec.data[0][0::self.x_ticks] + [self.data_ec.data[0][-1]]
+        data_kspmem = self.data_kspmem.data[0][0::self.x_ticks] + [self.data_kspmem.data[0][-1]]
+        data_eccpu = self.data_eccpu.data[0][0::self.x_ticks] + [self.data_eccpu.data[0][-1]]
+        self.algorithms_comparison_figure(
+            self.trace_file,
+            self.hosts_scenario,
+            data_eu,
+            data_ksp,
+            data_ec,
+            data_kspmem,
+            data_eccpu,
+            self.x_key, self.y_key,
+            self.x_title, self.y_title,
+            self.title,
+            )
+
 if __name__ == '__main__':
     #gg = GraphGenerator(dir, pms_scenarios)
     #gg.create_comparison_graph()

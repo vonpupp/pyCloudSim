@@ -1,23 +1,3 @@
-# Copyright 2013 Albert De La Fuente
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-"""
-Distsim :: a VM distribution simulator
-"""
-__version__ = "0.1"
-__author__  = "Albert De La Fuente"
-
 import copy
 import random
 import operator
@@ -35,7 +15,7 @@ class EnergyUnawareStrategyPlacement:
         self.constraints = lambda values: (
             add_constraints(values, constraint_list)
         )
-    
+
     def check_constraints(self, item_list):
         total_cpu = sum(map(operator.itemgetter('cpu'), item_list))
         total_mem = sum(map(operator.itemgetter('mem'), item_list))
@@ -46,10 +26,13 @@ class EnergyUnawareStrategyPlacement:
 
     def get_vm_objects(self, items_list):
         return items_list
-      
+
     def set_vmm(self, vmm):
         self.vmm = vmm
         self.items = self.vmm.items
+
+    def set_base_graph_name(self, base_graph_name):
+        self.base_graph_name = base_graph_name
 
     def solve_host(self):
         result = []

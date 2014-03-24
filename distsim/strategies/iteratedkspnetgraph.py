@@ -19,7 +19,7 @@ def add_double_constraint(values, constraint):
 def add_constraints(values, constraint_list):
     return [add_constraint(values, constraint) for constraint in constraint_list]
 
-class OpenOptStrategyPlacementMem:
+class OpenOptStrategyPlacementNetGraph:
     def __init__(self):
         self.constraints = None
         self.items = None
@@ -27,12 +27,12 @@ class OpenOptStrategyPlacementMem:
         self.pmm = None
         #self.items_count = items_count
         #self.hosts_count = hosts_count
-        self.gen_costraints(['cpu', 'disk', 'net'])
+        self.gen_costraints()
 
-    def gen_costraints(self, constraint_list):
+    def gen_costraints(self):
         self.constraints = lambda values: (
             values['cpu'] < 99,
-            values['mem'] < 200,
+            values['mem'] < 99,
             values['disk'] < 99,
             values['net'] < 99,
         )
@@ -51,9 +51,17 @@ class OpenOptStrategyPlacementMem:
     def set_vmm(self, vmm):
         self.vmm = vmm
         self.items = self.vmm.items
+        #TODO: Remap items
+        self.remap_items_weight()
 
     def set_base_graph_name(self, base_graph_name):
         self.base_graph_name = base_graph_name
+
+    def remap_items_weight(self):
+        if self.base_graph_name:
+            # load graph
+            # remap weights
+            pass
 
     def solve_host(self):
         p = KSP('weight', self.items, constraints = self.constraints)
