@@ -18,9 +18,9 @@ Virtual Machines Manager
 __version__ = "0.1"
 __author__  = "Albert De La Fuente"
 
-from distsim.model.tracegen import TraceGenerator
+from pycloudsim.model.tracegen import TraceGenerator
 from itertools import islice
-from distsim.model.virtualmachine import VirtualMachine
+from pycloudsim.model.virtualmachine import VirtualMachine
 
 class VMManager:
     def __init__(self, trace_file, total_vm):

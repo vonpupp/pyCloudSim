@@ -4,7 +4,7 @@ import csv
 import pickle
 import os
 from manager import Manager
-from distsim.analysis.louvain import *
+from pycloudsim.analysis.louvain import *
 
 
 class Simulator:

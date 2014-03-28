@@ -19,7 +19,7 @@ __version__ = "0.1"
 __author__  = "Albert De La Fuente"
 
 
-from distsim.model.phisicalmachine import PhysicalMachine
+from pycloudsim.model.phisicalmachine import PhysicalMachine
 
 class PMManager:
     def __init__(self, total_pm):

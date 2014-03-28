@@ -111,7 +111,7 @@ def my_evaluator(candidate, args):
 
     return fitness
 
-class EvolutionaryComputationStrategyPlacementCPU:
+class EvolutionaryComputationStrategyPlacementNet:
     def __init__(self):
         self.constraints = None
         self.items = None

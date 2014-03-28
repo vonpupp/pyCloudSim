@@ -1,18 +1,20 @@
-*******
-DistSim
-*******
+**********
+pyCloudSim
+**********
 
 A VM placement simulator with energy-efficiency focus.
 
-DistSim has the following available strategies:
+pyCloudSim has the following available strategies:
 
-* A KSP (Knapsack) based strategy
-* A EC (Evolutionary Computation) based strategy
-* An enery-unaware strategy
+* Iterated-KSP. A KSP (Knapsack) based strategy
+* Iterated-KSP-Mem. Similar to Iterated-KSP it considers using the virtual memory by doubling the RAM
+* Iterated-EC. An EC (Evolutionary Computation) based strategy
+* Iterated-EC-Net. Similart to the Iterated-EC it considers minimizing the network usage simultaneously
+* Iterated-EU. An enery-unaware strategy
 
 Execution:
 
-  $ python distsim.py -t ``TRACEFILE`` -o ``OUTDIR`` -pm ``#PHYSICAL MACHINES`` -vma ``#STARTING VIRTUAL MACHINES`` -vmo ``#ENDING VIRTUAL MACHINES`` -vme ``#INCREMENT VIRTUAL MACHINES`` ``STRATEGIES``
+  $ python pycloudsim.py -t ``TRACEFILE`` -o ``OUTDIR`` -pm ``#PHYSICAL MACHINES`` -vma ``#STARTING VIRTUAL MACHINES`` -vmo ``#ENDING VIRTUAL MACHINES`` -vme ``#INCREMENT VIRTUAL MACHINES`` ``STRATEGIES``
 
 Where
 

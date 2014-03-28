@@ -70,7 +70,7 @@ class GraphGenerator:
         trans['OpenOptStrategyPlacement'] = 'Iterated-KSP'
         trans['EvolutionaryComputationStrategyPlacement'] = 'Iterated-EC'
         trans['OpenOptStrategyPlacementMem'] = 'Iterated-KSP-Mem'
-        trans['EvolutionaryComputationStrategyPlacementCPU'] = 'Iterated-EC-Net'
+        trans['EvolutionaryComputationStrategyPlacementNet'] = 'Iterated-EC-Net'
         return trans[title]
 
     def vms_ticks(self, vms):
@@ -328,7 +328,7 @@ class GraphGenerator:
         self.data_ksp = self.data['OpenOptStrategyPlacement']
         self.data_ec = self.data['EvolutionaryComputationStrategyPlacement']
         self.data_kspmem = self.data['OpenOptStrategyPlacementMem']
-        self.data_eccpu = self.data['EvolutionaryComputationStrategyPlacementCPU']
+        self.data_eccpu = self.data['EvolutionaryComputationStrategyPlacementNet']
         self.x_key = '#VM'
         self.x_title = 'Number of VMs'
 
@@ -436,7 +436,7 @@ class PlacementGraphGenerator:
         trans['OpenOptStrategyPlacement'] = 'Iterated-KSP'
         trans['EvolutionaryComputationStrategyPlacement'] = 'Iterated-EC'
         trans['OpenOptStrategyPlacementMem'] = 'Iterated-KSP-Mem'
-        trans['EvolutionaryComputationStrategyPlacementCPU'] = 'Iterated-EC-Net'
+        trans['EvolutionaryComputationStrategyPlacementNet'] = 'Iterated-EC-Net'
         return trans[title]
 
     def vms_ticks(self, vms):
@@ -570,7 +570,7 @@ class PlacementGraphGenerator:
         self.data_ksp = self.data['OpenOptStrategyPlacement']
         self.data_ec = self.data['EvolutionaryComputationStrategyPlacement']
 #        self.data_kspmem = self.data['OpenOptStrategyPlacementMem']
-        self.data_eccpu = self.data['EvolutionaryComputationStrategyPlacementCPU']
+        self.data_eccpu = self.data['EvolutionaryComputationStrategyPlacementNet']
 
         rects1 = plt.bar(ind, self.data_ksp, width, color='blue', hatch='o', label='ksp')
         rects2 = plt.bar(ind+width, self.data_ec, width, color='green', hatch='+', label='ec')
@@ -705,7 +705,7 @@ class PlacementGraphGenerator:
 #        self.data_ksp = self.data['OpenOptStrategyPlacement']
 #        self.data_ec = self.data['EvolutionaryComputationStrategyPlacement']
 #        self.data_kspmem = self.data['OpenOptStrategyPlacementMem']
-#        self.data_eccpu = self.data['EvolutionaryComputationStrategyPlacementCPU']
+#        self.data_eccpu = self.data['EvolutionaryComputationStrategyPlacementNet']
 
         self.y_key = 'net'
         self.y_title = 'Network load percentage'

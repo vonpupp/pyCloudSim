@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # vim:ts=4:sts=4:sw=4:et:wrap:ai:fileencoding=utf-8:
 #
-# Copyright 2013 Albert De La Fuente
+# Copyright 2013-2014 Albert De La Fuente
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 # limitations under the License.
 
 """
-Distsim :: A VM distribution/placement simulator
+pyCloudSim :: A Cloud VMs placement simulator
 """
-__version__ = "0.1"
-__author__  = "Albert De La Fuente"
+__version__ = "0.2"
+__author__  = "Albert De La Fuente Vigliotti"
 
 
-from distsim.managers.simmanager import Simulator
+from pycloudsim.managers.simmanager import Simulator
 import argparse
 
 #PROF_DATA = {}
@@ -64,7 +64,7 @@ def get_default_arg(default_value, arg):
         return arg
 
 if __name__ == "__main__":
-    # ./ distsim.py -h 72 -vma 16 -vmo 304 -vme 16
+    # ./ pycloudsim.py -h 72 -vma 16 -vmo 304 -vme 16
     #   -t planetlab-workload-traces/merkur_planetlab_haw-hamburg_de_ yale_p4p
     #   -o results/72-bla
     # ./ simuplot.py
@@ -107,37 +107,37 @@ if __name__ == "__main__":
     #vms_scenarios = range(16, 64, 16)
 
     if simulate_eu:
-        from distsim.strategies.energyunaware import EnergyUnawareStrategyPlacement
+        from pycloudsim.strategies.energyunaware import EnergyUnawareStrategyPlacement
         strategy = EnergyUnawareStrategyPlacement()
         s.simulate_strategy(strategy, trace_file, pms_scenarios, vms_scenarios)
 
     if simulate_ksp:
-        from distsim.strategies.iteratedksp import OpenOptStrategyPlacement
+        from pycloudsim.strategies.iteratedksp import OpenOptStrategyPlacement
         strategy = OpenOptStrategyPlacement()
         s.simulate_strategy(strategy, trace_file, pms_scenarios, vms_scenarios)
 
     if simulate_ksp_mem:
-        from distsim.strategies.iteratedkspmem import OpenOptStrategyPlacementMem
+        from pycloudsim.strategies.iteratedkspmem import OpenOptStrategyPlacementMem
         strategy = OpenOptStrategyPlacementMem()
         s.simulate_strategy(strategy, trace_file, pms_scenarios, vms_scenarios)
 
     if simulate_ksp_net_graph:
-        from distsim.strategies.iteratedkspnetgraph import OpenOptStrategyPlacementNetGraph
+        from pycloudsim.strategies.iteratedkspnetgraph import OpenOptStrategyPlacementNetGraph
         strategy = OpenOptStrategyPlacementNetGraph()
         s.simulate_strategy(strategy, trace_file, pms_scenarios, vms_scenarios)
 
     if simulate_ec:
-        from distsim.strategies.iteratedec import EvolutionaryComputationStrategyPlacement
+        from pycloudsim.strategies.iteratedec import EvolutionaryComputationStrategyPlacement
         strategy = EvolutionaryComputationStrategyPlacement()
         s.simulate_strategy(strategy, trace_file, pms_scenarios, vms_scenarios)
 
     if simulate_ec_cpu:
-        from distsim.strategies.iteratedeccpu import EvolutionaryComputationStrategyPlacementCPU
-        strategy = EvolutionaryComputationStrategyPlacementCPU()
+        from pycloudsim.strategies.iteratedecnet import EvolutionaryComputationStrategyPlacementNet
+        strategy = EvolutionaryComputationStrategyPlacementNet()
         s.simulate_strategy(strategy, trace_file, pms_scenarios, vms_scenarios)
 
     if simulate_ec_net_graph:
-        from distsim.strategies.iteratedecnetgraph import EvolutionaryComputationStrategyPlacementNetGraph
+        from pycloudsim.strategies.iteratedecnetgraph import EvolutionaryComputationStrategyPlacementNetGraph
         strategy = EvolutionaryComputationStrategyPlacementNetGraph()
         s.simulate_strategy(strategy, trace_file, pms_scenarios, vms_scenarios)
 

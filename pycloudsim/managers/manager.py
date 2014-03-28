@@ -21,7 +21,7 @@ __author__  = "Albert De La Fuente"
 
 from pmmanager import PMManager
 from vmmanager import VMManager
-from distsim.strategies.energyunaware import EnergyUnawareStrategyPlacement
+from pycloudsim.strategies.energyunaware import EnergyUnawareStrategyPlacement
 
 class Manager:
     def __init__(self):
