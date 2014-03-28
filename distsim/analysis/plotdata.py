@@ -12,6 +12,8 @@ from pylab import *
 import numpy as np
 import scipy as sp
 import scipy.stats
+from collections import defaultdict
+
 
 dir = 'results'
 pms_scenarios = [72] #range(10, 110, 10)
@@ -68,7 +70,7 @@ class GraphGenerator:
         trans['OpenOptStrategyPlacement'] = 'Iterated-KSP'
         trans['EvolutionaryComputationStrategyPlacement'] = 'Iterated-EC'
         trans['OpenOptStrategyPlacementMem'] = 'Iterated-KSP-Mem'
-        trans['EvolutionaryComputationStrategyPlacementCPU'] = 'Iterated-EC-CPU'
+        trans['EvolutionaryComputationStrategyPlacementCPU'] = 'Iterated-EC-Net'
         return trans[title]
 
     def vms_ticks(self, vms):
@@ -434,7 +436,7 @@ class PlacementGraphGenerator:
         trans['OpenOptStrategyPlacement'] = 'Iterated-KSP'
         trans['EvolutionaryComputationStrategyPlacement'] = 'Iterated-EC'
         trans['OpenOptStrategyPlacementMem'] = 'Iterated-KSP-Mem'
-        trans['EvolutionaryComputationStrategyPlacementCPU'] = 'Iterated-EC-CPU'
+        trans['EvolutionaryComputationStrategyPlacementCPU'] = 'Iterated-EC-Net'
         return trans[title]
 
     def vms_ticks(self, vms):
@@ -449,125 +451,294 @@ class PlacementGraphGenerator:
         result[0] = '001'
         return result
 
+    def key_avg(self, d, k):
+        result = 0
+        for item in d:
+            result += d[k]
+        result = result / len(d)
+        return result
 
-    def algorithms_comparison_figure(self, trace_file, hosts_scenario,
-                 data_ref, data1, data2, data3, data4,
-                 x_aspect, y_aspect,
-                 x_title, y_title, title):
-        x2 = map(int, self.remap_data(data_ref, x_aspect))
-        y2a = self.remap_data(data_ref, y_aspect)
-        y2b = self.remap_data(data1, y_aspect)
-        y2c = self.remap_data(data2, y_aspect)
-        y2d = self.remap_data(data3, y_aspect)
-        y2e = self.remap_data(data4, y_aspect)
 
-        #x2 = data_ref[x_aspect]
-        #y2a = data_ref[y_aspect]
-        #y2b = data1[y_aspect]
-        #y2c = data2[y_aspect]
-
-        fig, ax = plt.subplots()
-        #self.remap_data(data_ref, 'strategy')
-#        ax.plot(x2, y2a, color='red', ls='-', marker='.', label=self.legend(data_ref[0]['Strategy']))
-        ax.plot(x2, y2b, color='blue', ls='-', marker='o', label=self.legend(data1[0]['Strategy']))
-        ax.plot(x2, y2c, color='green', ls='-', marker='s', label=self.legend(data2[0]['Strategy']))
-#        ax.plot(x2, y2d, color='purple', ls='-.', marker='o', label=self.legend(data3[0]['Strategy']))
-        ax.plot(x2, y2e, color='magenta', ls='-.', marker='s', label=self.legend(data4[0]['Strategy']))
-        #ax.fill(y2a, y2b, alpha=0.3)
-        ax.set_xlabel(x_title, fontsize=18)
-        ax.set_ylabel(y_title, fontsize=18)
-        ax.set_title(title + ' (' + str(hosts_scenario) + ' hosts)')
-        #ax.legend(loc=2); # upper left corner
-        ax.xaxis.set_ticks(x2)
-#        import ipdb; ipdb.set_trace() # BREAKPOINT
-        pylab.xticks(x2, self.vms_ticks(x2), rotation='vertical', verticalalignment='top')
-
-        ax = fig.gca()
-
-        #y2a energy-unaware
-        #y2b ksp
-        #y2c ec
-        #y2d ksp-mem
-        #y2e ec-cpu
-
-        # Coloring KSP vs energy-unaware
-#        p = fill_between(ax, x2, y2a, y2b, facecolor='b')
-#        p.set_alpha(0.1)
-
-        # Coloring EC vs KSP
-        p = fill_between(ax, x2, y2b, y2c, facecolor='g')
-        p.set_alpha(0.1)
-
-        # Coloring EC vs KSP-MEM
-#        p = fill_between(ax, x2, y2b, y2d, facecolor='m')
-#        p.set_alpha(0.1)
-
-#        # Coloring KSP vs energy-unaware
-#        p = fill_between(ax, x2, y2a, y2b, facecolor='g')
-#        p.set_alpha(0.2)
+#    def algorithms_comparison_figure(self, trace_file, hosts_scenario, case,
+#                 data_ref, data1, data2, data3, data4,
+#                 x_aspect, y_aspect,
+#                 x_title, y_title, title):
+#        x2 = map(int, self.remap_data(data_ref, x_aspect))
+#        y2a = self.remap_data(data_ref, y_aspect)
+#        y2b = self.remap_data(data1, y_aspect)
+#        y2c = self.remap_data(data2, y_aspect)
+#        y2d = self.remap_data(data3, y_aspect)
+#        y2e = self.remap_data(data4, y_aspect)
 #
-        # Coloring EC-CPU vs KSP
-        p = fill_between(ax, x2, y2e, y2c, facecolor='b')
-        p.set_alpha(0.2)
+#        #x2 = data_ref[x_aspect]
+#        #y2a = data_ref[y_aspect]
+#        #y2b = data1[y_aspect]
+#        #y2c = data2[y_aspect]
+#
+#        fig, ax = plt.subplots()
+#        #self.remap_data(data_ref, 'strategy')
+##        ax.plot(x2, y2a, color='red', ls='-', marker='.', label=self.legend(data_ref[0]['Strategy']))
+#        ax.plot(x2, y2b, color='blue', ls='-', marker='o', label=self.legend(data1[0]['Strategy']))
+#        ax.plot(x2, y2c, color='green', ls='-', marker='s', label=self.legend(data2[0]['Strategy']))
+##        ax.plot(x2, y2d, color='purple', ls='-.', marker='o', label=self.legend(data3[0]['Strategy']))
+#        ax.plot(x2, y2e, color='magenta', ls='-.', marker='s', label=self.legend(data4[0]['Strategy']))
+#        #ax.fill(y2a, y2b, alpha=0.3)
+#        ax.set_xlabel(x_title, fontsize=18)
+#        ax.set_ylabel(y_title, fontsize=18)
+#        ax.set_title(title + ' (' + str(hosts_scenario) + ' hosts)')
+#        #ax.legend(loc=2); # upper left corner
+#        ax.xaxis.set_ticks(x2)
+##        import ipdb; ipdb.set_trace() # BREAKPOINT
+#        pylab.xticks(x2, self.vms_ticks(x2), rotation='vertical', verticalalignment='top')
+#
+#        ax = fig.gca()
+#
+#        #y2a energy-unaware
+#        #y2b ksp
+#        #y2c ec
+#        #y2d ksp-mem
+#        #y2e ec-cpu
+#
+#        # Coloring KSP vs energy-unaware
+##        p = fill_between(ax, x2, y2a, y2b, facecolor='b')
+##        p.set_alpha(0.1)
+#
+#        # Coloring EC vs KSP
+#        p = fill_between(ax, x2, y2b, y2c, facecolor='g')
+#        p.set_alpha(0.1)
 #
 #        # Coloring EC vs KSP-MEM
-#        p = fill_between(ax, x2, y2b, y2d, facecolor='m')
-#        p.set_alpha(0.1)
-
-#        p = fill_between(ax, x2, y2b, y2c, facecolor='b')
+##        p = fill_between(ax, x2, y2b, y2d, facecolor='m')
+##        p.set_alpha(0.1)
+#
+##        # Coloring KSP vs energy-unaware
+##        p = fill_between(ax, x2, y2a, y2b, facecolor='g')
+##        p.set_alpha(0.2)
+##
+#        # Coloring EC-CPU vs KSP
+#        p = fill_between(ax, x2, y2e, y2c, facecolor='b')
 #        p.set_alpha(0.2)
-
-        plt.grid(True)
-        box = ax.get_position()
-        #ax.set_position([box.x0, box.y0 + box.height * 0.1, box.width, box.height * 0.9])
-        ax.set_position([box.x0, box.y0 + box.height * 0.2,
-            box.width, box.height * 0.8])
-
-        # Put a legend below current axis
-        lg = legend()
-        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.14),
-            fancybox=False, shadow=False, ncol=2)
+##
+##        # Coloring EC vs KSP-MEM
+##        p = fill_between(ax, x2, y2b, y2d, facecolor='m')
+##        p.set_alpha(0.1)
+#
+##        p = fill_between(ax, x2, y2b, y2c, facecolor='b')
+##        p.set_alpha(0.2)
+#
+#        plt.grid(True)
+#        box = ax.get_position()
+#        #ax.set_position([box.x0, box.y0 + box.height * 0.1, box.width, box.height * 0.9])
+#        ax.set_position([box.x0, box.y0 + box.height * 0.2,
+#            box.width, box.height * 0.8])
+#
+#        # Put a legend below current axis
 #        lg = legend()
-        lg.draw_frame(False)
+#        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.14),
+#            fancybox=False, shadow=False, ncol=2)
+##        lg = legend()
+#        lg.draw_frame(False)
+#
+#        plt.savefig(self.result_dir + '/figure-' + trace_file + '-' +
+#            str(hosts_scenario).zfill(3) + '-' +
+#            title + '-' + case + '.png')
+#        plt.close()
 
-        plt.savefig(self.result_dir + '/figure-' + trace_file + '-' +
-            str(hosts_scenario).zfill(3) + '-' +
-            title + '.png')
-        plt.close()
+    def traces_algorithm_comparison_bar_chart(self):
+#    def traces_algorithm_comparison_bar_chart(self, yksp, yec, yecn,
+#                                              x_title, x_ticks, y_title, title):
 
-    def plot_all_algorithm_comparison(self, trace_file, hosts_scenario):
-        self.hosts_scenario = hosts_scenario
-        self.trace_file = trace_file
+        def autolabel(rects):
+            for rect in rects:
+                h = rect.get_height()
+                ax.text(rect.get_x()+rect.get_width()/2., 1.05*h+4, '{}'.format(h),
+                        ha='center', va='top', rotation='vertical')
 
-        self.data_eu = self.data['EnergyUnawareStrategyPlacement']
+
+        fig, ax = plt.subplots()
+        #fig = plt.figure()
+        #ax = fig.add_subplot(111)
+
+#        yksp = [45.88, 51.60, 66.62, 52.25, 53.14, 72.20]
+#        yec = [40.94,   51.20,   64.58,   51.93,   54.00,   72.20]
+#        yecn = [21.07,   42.14,   52.42,   39.97,   43.17,   61.45]
+
+        N = len(self.x_ticks)
+        ind = np.arange(N)  # the x locations for the groups
+        width = 0.27       # the width of the bars
+
         self.data_ksp = self.data['OpenOptStrategyPlacement']
         self.data_ec = self.data['EvolutionaryComputationStrategyPlacement']
-        self.data_kspmem = self.data['OpenOptStrategyPlacementMem']
+#        self.data_kspmem = self.data['OpenOptStrategyPlacementMem']
         self.data_eccpu = self.data['EvolutionaryComputationStrategyPlacementCPU']
-        self.x_key = 'Host'
-        self.x_title = 'Number of Hosts'
 
-        self.y_key = 'net'
-        self.y_title = 'Network load'
-        self.title = 'Overal network load snapshot - 288 VMs'
+        rects1 = plt.bar(ind, self.data_ksp, width, color='blue', hatch='o', label='ksp')
+        rects2 = plt.bar(ind+width, self.data_ec, width, color='green', hatch='+', label='ec')
+        rects3 = plt.bar(ind+width*2, self.data_eccpu, width, color='magenta', label='ecn')
 
-        data_eu = self.data_eu.data[0][0::self.x_ticks] + [self.data_eu.data[0][-1]]
-        data_ksp = self.data_ksp.data[0][0::self.x_ticks] + [self.data_ksp.data[0][-1]]
-        data_ec = self.data_ec.data[0][0::self.x_ticks] + [self.data_ec.data[0][-1]]
-        data_kspmem = self.data_kspmem.data[0][0::self.x_ticks] + [self.data_kspmem.data[0][-1]]
-        data_eccpu = self.data_eccpu.data[0][0::self.x_ticks] + [self.data_eccpu.data[0][-1]]
+        #fig, ax = plt.subplots()
+        #ax = fig.gca()
+
+        ax.set_title(self.title)
+        ax.set_ylabel(self.y_title)
+        ax.set_xlabel(self.x_title)
+        ax.set_xticks(ind+1.5*width)
+        ax.set_yticks([i for i in range(0, 95, 5)])
+        ax.set_xticklabels(self.x_ticks)
+
+        #autolabel(rects1)
+        #autolabel(rects2)
+        #autolabel(rects3)
+
+        ax.legend((rects1[0], rects2[0], rects3[0]), ('Iterated-KSP', 'Iterated-EC', 'Iterated-EC-Net'), loc='upper left')
+
+        #box = ax.get_position()
+        #ax.set_position([box.x0, box.y0 + box.height * 0.2,
+        #    box.width, box.height * 0.18])
+        #
+        ## Put a legend below current axis
+        #ax.legend(loc='upper center', bbox_to_anchor=(0.10, -0.14),
+        #    fancybox=False, shadow=False, ncol=3)
+        #ax.legend( (rects1[0], rects2[0], rects3[0]), ('ksp', 'ec', 'ecn') )
+
+        plt.grid(True)
+        fig.savefig('results/figure-' + self.title) #100-histogram overall network load 288 VMs.png')
+
+    def algorithms_comparison_figure_cases(self):
+#        self.algorithms_comparison_figure(
+#            self.trace_file,
+#            self.hosts_scenario,
+#            data_eu,
+#            data_ksp,
+#            data_ec,
+#            data_kspmem,
+#            data_eccpu,
+#            self.x_key, self.y_key,
+#            self.x_title, self.y_title,
+#            self.title,
+#            )
+
+#        t = self.key_avg(self.data_eu.best_case, 'net')
+#        data_eu = self.data_eu.data[0][0::self.x_ticks] + [self.data_eu.data[0][-1]]
+#        data_ksp = self.data_ksp.data[0][0::self.x_ticks] + [self.data_ksp.data[0][-1]]
+#        data_ec = self.data_ec.data[0][0::self.x_ticks] + [self.data_ec.data[0][-1]]
+#        data_kspmem = self.data_kspmem.data[0][0::self.x_ticks] + [self.data_kspmem.data[0][-1]]
+#        data_eccpu = self.data_eccpu.data[0][0::self.x_ticks] + [self.data_eccpu.data[0][-1]]
+#        import ipdb; ipdb.set_trace() # BREAKPOINT
         self.algorithms_comparison_figure(
             self.trace_file,
             self.hosts_scenario,
-            data_eu,
-            data_ksp,
-            data_ec,
-            data_kspmem,
-            data_eccpu,
+            'best',
+            self.data_eu.best_case,
+            self.data_ksp.best_case,
+            self.data_ec.best_case,
+            self.data_kspmem.best_case,
+            self.data_eccpu.best_case,
             self.x_key, self.y_key,
             self.x_title, self.y_title,
             self.title,
             )
+
+        self.algorithms_comparison_figure(
+            self.trace_file,
+            self.hosts_scenario,
+            'worst',
+            self.data_eu.worst_case,
+            self.data_ksp.worst_case,
+            self.data_ec.worst_case,
+            self.data_kspmem.worst_case,
+            self.data_eccpu.worst_case,
+            self.x_key, self.y_key,
+            self.x_title, self.y_title,
+            self.title,
+            )
+
+        self.algorithms_comparison_figure(
+            self.trace_file,
+            self.hosts_scenario,
+            'average',
+            self.data_eu.average_case,
+            self.data_ksp.average_case,
+            self.data_ec.average_case,
+            self.data_kspmem.average_case,
+            self.data_eccpu.average_case,
+            self.x_key, self.y_key,
+            self.x_title, self.y_title,
+            self.title,
+            )
+
+    def get_avg_case_attribute_per_trace_list(self, algorithm_scenarios, trace_scenarios, host_count, vms_count, attibute):
+        self.traces_algorithm_data = self.data[host_count][vms_count]
+        result = {}
+        summary = defaultdict(lambda: defaultdict(dict))
+        for algorithm in algorithm_scenarios: #self.traces_algorithm_data:
+            per_algorithm_data = self.traces_algorithm_data[algorithm]
+            result[algorithm] = []
+            for trace in trace_scenarios: #per_algorithm_data:
+                per_trace_data = self.traces_algorithm_data[algorithm][trace]
+                l = []
+                for host in range(0, host_count):
+                    attribute_value = per_trace_data.average_case[host]['net']
+                    l += [attribute_value]
+                summary[algorithm][trace] = sum(l) / host_count
+                result[algorithm] += [sum(l) / host_count]
+        return result
+
+    def plot_all_algorithm_comparison(self, algorithm_scenarios, trace_scenarios, host_count, vms_count):
+        self.hosts_scenario = host_count
+        self.vms_scenarios = vms_count
+        self.trace_scenarios = trace_scenarios
+
+        self.data = self.get_avg_case_attribute_per_trace_list(algorithm_scenarios, trace_scenarios, host_count, vms_count, 'net')
+
+        # Repetitions
+        # repetitions = self.traces_algorithm_data['hybrid4']['EnergyUnawareStrategyPlacement']
+        # all_hosts_experiment30_full_data = repetitions.data[30]
+        # host100 = all_hosts_experiment30_full_data[100]
+        # host100['Mem']
+
+        # average_case_per_hosts = repetitions.average_case
+        # host100 = average_case_per_hosts[100]
+        # host100['net']
+
+#        self.data_eu = data['EnergyUnawareStrategyPlacement']
+#        self.data_ksp = self.data['OpenOptStrategyPlacement']
+#        self.data_ec = self.data['EvolutionaryComputationStrategyPlacement']
+#        self.data_kspmem = self.data['OpenOptStrategyPlacementMem']
+#        self.data_eccpu = self.data['EvolutionaryComputationStrategyPlacementCPU']
+
+        self.y_key = 'net'
+        self.y_title = 'Network load percentage'
+        self.x_title = 'Traces'
+        self.x_ticks = ['T01', 'T02', 'T03', 'T04', 'T05', 'T06'] #trace_scenarios
+        self.title = 'Overal network usage comparison for 288 VMs on 100 hosts'
+
+#        import ipdb; ipdb.set_trace() # BREAKPOINT
+#        self.algorithms_comparison_figure_cases()
+
+#        data_eu = self.data_eu.data[0][0::self.x_ticks] + [self.data_eu.data[0][-1]]
+#        data_ksp = self.data_ksp.data[0][0::self.x_ticks] + [self.data_ksp.data[0][-1]]
+#        data_ec = self.data_ec.data[0][0::self.x_ticks] + [self.data_ec.data[0][-1]]
+#        data_kspmem = self.data_kspmem.data[0][0::self.x_ticks] + [self.data_kspmem.data[0][-1]]
+#        data_eccpu = self.data_eccpu.data[0][0::self.x_ticks] + [self.data_eccpu.data[0][-1]]
+
+        self.traces_algorithm_comparison_bar_chart()
+#        self.traces_algorithm_comparison_bar_chart(self.data_ksp, self.data_ec, self.data_eccpu,
+#                                            self.x_title, trace_scenarios, #('T01', 'T02', 'T03', 'T04', 'T05', 'T06', 'T07'),
+#                                            self.y_title, self.title)
+
+#        self.algorithms_comparison_figure(
+#            self.trace_file,
+#            self.hosts_scenario,
+#            data_eu,
+#            data_ksp,
+#            data_ec,
+#            data_kspmem,
+#            data_eccpu,
+#            self.x_key, self.y_key,
+#            self.x_title, self.y_title,
+#            self.title,
+#            )
 
 if __name__ == '__main__':
     #gg = GraphGenerator(dir, pms_scenarios)

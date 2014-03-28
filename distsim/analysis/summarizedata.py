@@ -190,4 +190,86 @@ class SummarizePlacementData():
         self.files = sorted(self.files)
         for file in self.files:
             self.load_file_placement(file)
-#        self.summarize_attributes()
+        self.remap_data()
+        # OK self.summary_list[host]['net']
+        self.summarize_attributes()
+        # OK self.average_case[host]['net']
+        self.get_scenario_ids()
+#        return self.best_case, self.worst_case, self.average_case
+
+    def map_column(self, scenario, column, selector):
+        return selector(scenario[column])
+
+    def get_scenario_ids(self):
+        self.ids = []
+        for item in self.summary_list:
+            self.ids += [int(item['Host'][0])]
+
+    def remap_data(self):
+        self.summary_list = []
+        repetitions = len(self.data)
+        scenarios = len(self.data[0])
+        for scenario in range(scenarios):
+            d = {}
+            for id_repetition, repetition in enumerate(self.data):
+                data = repetition[scenario]
+                for attribute in data.keys():
+                    value = data[attribute]
+                    try:
+                        #obj = self.summary_list[attribute]
+                        #TODO: Research on how to improve this part, smelly code
+                        try:
+                            d[attribute] += [float(value)]
+                        except:
+                            d[attribute] += [str(value)]
+                    except:
+                        try:
+                            d[attribute] = [float(value)]
+                        except:
+                            d[attribute] = [str(value)]
+            self.summary_list.append(d)
+
+    def best_worst_average_cases(self, scenario, column, bselector, wselector, mselector):
+        best_case = self.best_case[len(self.best_case)-1]
+        best_case[column] = self.map_column(scenario, column, bselector)
+        try:
+            m, ci = mean_confidence_interval(scenario[column])
+            best_case[column + '-95m'] = m
+            best_case[column + '-95h'] = ci
+        except:
+            best_case[column + '-95m'] = 0
+            best_case[column + '-95h'] = 0
+
+        worst_case = self.worst_case[len(self.worst_case)-1]
+        worst_case[column] = self.map_column(scenario, column, wselector)
+        #test = scipy.stats.norm.interval(0.95, loc=mean, scale=std)
+        try:
+            m, ci = mean_confidence_interval(scenario[column])
+            worst_case[column + '-95m'] = m
+            worst_case[column + '-95h'] = ci
+        except:
+            worst_case[column + '-95m'] = 0
+            worst_case[column + '-95h'] = 0
+
+        average_case = self.average_case[len(self.average_case)-1]
+        average_case[column] = self.map_column(scenario, column, mselector)
+        try:
+            m, ci = mean_confidence_interval(scenario[column])
+            average_case[column + '-95m'] = m
+            average_case[column + '-95h'] = ci
+        except:
+            average_case[column + '-95m'] = 0
+            average_case[column + '-95h'] = 0
+
+    def summarize_attributes(self):
+        self.worst_case = []
+        self.best_case = []
+        self.average_case = []
+        for scenario in self.summary_list:
+            self.worst_case.append({})
+            self.best_case.append({})
+            self.average_case.append({})
+            self.best_worst_average_cases(scenario, 'CPU', min, max, np.mean)
+            self.best_worst_average_cases(scenario, 'Mem', min, max, np.mean)
+            self.best_worst_average_cases(scenario, 'net', min, max, np.mean)
+            self.best_worst_average_cases(scenario, 'disk', min, max, np.mean)
