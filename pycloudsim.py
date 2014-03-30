@@ -80,7 +80,7 @@ if __name__ == "__main__":
     parser.add_argument('-skspmem', '--simkspmem', help='Simulate Iterated-KSP-CPU', required=False)
     parser.add_argument('-skspnetgraph', '--simkspnetgraph', help='Simulate Iterated-KSP-Net-Graph', required=False)
     parser.add_argument('-sec', '--simec', help='Simulate Iterated-EC', required=False)
-    parser.add_argument('-seccpu', '--simeccpu', help='Simulate Iterated-EC-CPU', required=False)
+    parser.add_argument('-secnet', '--simecnet', help='Simulate Iterated-EC-Net', required=False)
     parser.add_argument('-secnetgraph', '--simecnetgraph', help='Simulate Iterated-EC-Net-Graph', required=False)
     args = parser.parse_args()
 
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     simulate_ksp_mem = bool(get_default_arg(0, args.simkspmem))
     simulate_ksp_net_graph = bool(get_default_arg(0, args.simkspnetgraph))
     simulate_ec = bool(get_default_arg(0, args.simec))
-    simulate_ec_cpu = bool(get_default_arg(0, args.simeccpu))
+    simulate_ec_net = bool(get_default_arg(0, args.simecnet))
     simulate_ec_net_graph = bool(get_default_arg(0, args.simecnetgraph))
 
     s = Simulator()
@@ -131,7 +131,7 @@ if __name__ == "__main__":
         strategy = EvolutionaryComputationStrategyPlacement()
         s.simulate_strategy(strategy, trace_file, pms_scenarios, vms_scenarios)
 
-    if simulate_ec_cpu:
+    if simulate_ec_net:
         from pycloudsim.strategies.iteratedecnet import EvolutionaryComputationStrategyPlacementNet
         strategy = EvolutionaryComputationStrategyPlacementNet()
         s.simulate_strategy(strategy, trace_file, pms_scenarios, vms_scenarios)

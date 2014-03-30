@@ -4,6 +4,8 @@ import time
 import bisect
 import collections
 import math
+import multiprocessing
+
 
 #@functools.total_ordering
 #class Lexicographic(object):
@@ -192,7 +194,11 @@ class EvolutionaryComputationStrategyPlacementNet:
         ea.replacer = inspyred.ec.replacers.generational_replacement
         #ea.observer = inspyred.ec.observers.stats_observer
         ea.terminator = inspyred.ec.terminators.evaluation_termination
-        final_pop = ea.evolve(my_generator, my_evaluator,
+        final_pop = ea.evolve(generator=my_generator,
+                              evaluator=my_evaluator,
+#                              evaluator=inspyred.ec.evaluators.parallel_evaluation_mp,
+#                              mp_evaluator=my_evaluator,
+#                              mp_num_cpus=multiprocessing.cpu_count(),
                               bounder=inspyred.ec.DiscreteBounder([0, 1]),
                               maximize=True,
                               pop_size=psize,
