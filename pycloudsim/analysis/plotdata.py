@@ -104,7 +104,7 @@ class GraphGenerator:
         #ax.fill(y2a, y2b, alpha=0.3)
         ax.set_xlabel(x_title, fontsize=18)
         ax.set_ylabel(y_title, fontsize=18)
-        ax.set_title(title + ' (' + str(hosts_scenario) + ' hosts)')
+#        ax.set_title(title + ' (' + str(hosts_scenario) + ' hosts)')
         #ax.legend(loc=2); # upper left corner
         ax.xaxis.set_ticks(x2)
         pylab.xticks(x2, self.vms_ticks(x2), rotation='vertical', verticalalignment='top')
@@ -148,13 +148,13 @@ class GraphGenerator:
         box = ax.get_position()
 #        import ipdb; ipdb.set_trace() # BREAKPOINT
         #ax.set_position([box.x0, box.y0 + box.height * 0.1, box.width, box.height * 0.9])
-        ax.set_position([box.x0, box.y0 + box.height * 0.2,
+        ax.set_position([box.x0, box.y0 + box.height * 0.25,
             box.width, box.height * 0.8])
 
         # Put a legend below current axis
         #ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, shadow=False, ncol=5)
         ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.14),
-            fancybox=False, shadow=False, ncol=2)
+            fancybox=True, shadow=True, ncol=2)
 
         plt.savefig(self.result_dir + '/figure-' + trace_file + '-' +
             str(hosts_scenario).zfill(3) + '-' +
@@ -567,19 +567,20 @@ class PlacementGraphGenerator:
         ind = np.arange(N)  # the x locations for the groups
         width = 0.27       # the width of the bars
 
-        self.data_ksp = self.data['OpenOptStrategyPlacement']
-        self.data_ec = self.data['EvolutionaryComputationStrategyPlacement']
-#        self.data_kspmem = self.data['OpenOptStrategyPlacementMem']
-        self.data_eccpu = self.data['EvolutionaryComputationStrategyPlacementNet']
+        self.data_ksp = self.data['OpenOptStrategyPlacement'][:N]
+#        self.data_kspmem = self.data['OpenOptStrategyPlacementMem'][:N]
+        self.data_ec = self.data['EvolutionaryComputationStrategyPlacement'][:N]
+        self.data_eccpu = self.data['EvolutionaryComputationStrategyPlacementNet'][:N]
 
-        rects1 = plt.bar(ind, self.data_ksp, width, color='blue', hatch='o', label='ksp')
-        rects2 = plt.bar(ind+width, self.data_ec, width, color='green', hatch='+', label='ec')
-        rects3 = plt.bar(ind+width*2, self.data_eccpu, width, color='magenta', label='ecn')
+        rects1 = plt.bar(ind+width, self.data_ksp, width, color='blue', hatch='o', label='ksp')
+#        rects2 = plt.bar(ind+width*2, self.data_kspmem, width, color='purple', label='kspm')
+        rects3 = plt.bar(ind+width*2, self.data_ec, width, color='green', hatch='+', label='ec')
+        rects4 = plt.bar(ind+width*3, self.data_eccpu, width, color='magenta', label='ecn')
 
         #fig, ax = plt.subplots()
         #ax = fig.gca()
 
-        ax.set_title(self.title)
+#        ax.set_title(self.title)
         ax.set_ylabel(self.y_title)
         ax.set_xlabel(self.x_title)
         ax.set_xticks(ind+1.5*width)
@@ -590,7 +591,8 @@ class PlacementGraphGenerator:
         #autolabel(rects2)
         #autolabel(rects3)
 
-        ax.legend((rects1[0], rects2[0], rects3[0]), ('Iterated-KSP', 'Iterated-EC', 'Iterated-EC-Net'), loc='upper left')
+#        ax.legend((rects1[0], rects2[0], rects3[0], rects4[0]), ('Iterated-KSP', 'Iterated-KSP-Mem', 'Iterated-EC', 'Iterated-EC-Net'), loc='upper left')
+        ax.legend((rects1[0], rects3[0], rects4[0]), ('Iterated-KSP', 'Iterated-EC', 'Iterated-EC-Net'), loc='upper left')
 
         #box = ax.get_position()
         #ax.set_position([box.x0, box.y0 + box.height * 0.2,
