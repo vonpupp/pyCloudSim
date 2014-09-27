@@ -724,7 +724,7 @@ class PlacementGraphGenerator:
 #        data_kspmem = self.data_kspmem.data[0][0::self.x_ticks] + [self.data_kspmem.data[0][-1]]
 #        data_eccpu = self.data_eccpu.data[0][0::self.x_ticks] + [self.data_eccpu.data[0][-1]]
 
-        self.traces_algorithm_comparison_bar_chart()
+        #self.traces_algorithm_comparison_bar_chart()
 #        self.traces_algorithm_comparison_bar_chart(self.data_ksp, self.data_ec, self.data_eccpu,
 #                                            self.x_title, trace_scenarios, #('T01', 'T02', 'T03', 'T04', 'T05', 'T06', 'T07'),
 #                                            self.y_title, self.title)
